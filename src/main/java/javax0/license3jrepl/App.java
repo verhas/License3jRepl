@@ -13,89 +13,109 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
 import java.util.Set;
 
-import static javax0.repl.CommandDefinitionBuilder.kw;
+import static javax0.repl.CommandDefinitionBuilder.start;
 
 /**
  * The main class of the REPL application
  */
 public class App {
-    public static final String PUBLIC_KEY_FILE = "publicKeyFile";
-    public static final String PRIVATE_KEY_FILE = "privateKeyFile";
-    public static final String ALGORITHM = "algorithm";
-    public static final String DIGEST = "digest";
-    public static final String SIZE = "size";
-    public static final String FORMAT = "format";
-    public static final String CONFIRM = "confirm";
-    public static final String TEXT = "TEXT";
-    public static final String BINARY = "BINARY";
-    public static final String BASE_64 = "BASE64";
+    private static final String PUBLIC_KEY_FILE = "publicKeyFile";
+    private static final String PRIVATE_KEY_FILE = "privateKeyFile";
+    private static final String ALGORITHM = "algorithm";
+    private static final String DIGEST = "digest";
+    private static final String SIZE = "size";
+    private static final String FORMAT = "format";
+    private static final String CONFIRM = "confirm";
+    private static final String TEXT = "TEXT";
+    private static final String BINARY = "BINARY";
+    private static final String BASE_64 = "BASE64";
     private License license;
     private boolean licenseToSave = false;
     private LicenseKeyPair keyPair;
     private final Repl application = new Repl().command(
-            kw("feature").executor(this::feature)
+            start().
+                    kw("feature")
                     .usage("feature name:TYPE=value")
                     .help("feature name:TYPE=value to add a new feature to the actual license\n" +
                             "Adding a new feature will invalidate the license.\n" +
                             "Do not forget to sign and save the license after you are finished.\n")
+                    .executor(this::feature)
     ).command(
-            kw("licenseLoad").parameters(Set.of(FORMAT, CONFIRM)).executor(this::loadLicense)
+            start().
+                    kw("licenseLoad").parameters(Set.of(FORMAT, CONFIRM))
                     .usage("licenseLoad [format=TEXT*|BINARY|BASE64] fileName")
                     .help("Load a license from a file to memory. Default assumption is that the license is TEXT format.\n" +
                             "Use the parameter 'format' if the license was saved BINARY or BASE64.\n")
+                    .executor(this::loadLicense)
     ).command(
-            kw("saveLicense").parameter(FORMAT).executor(this::saveLicense)
+            start().
+                    kw("saveLicense").parameter(FORMAT)
                     .usage("saveLicense [format=TEXT*|BINARY|BASE64] fileName")
                     .help("Save the license to a file. The file will be overwritten.\n" +
                             "Use the 'format' parameter to specify the format to be used for saving\n" +
                             "The default format is TEXT.\n")
+                    .executor(this::saveLicense)
     ).command(
-            kw("loadPrivateKey").parameter(FORMAT).executor(this::loadPrivateKey)
+            start().
+                    kw("loadPrivateKey").parameter(FORMAT)
                     .usage("loadPrivateKey [format=BINARY*|BASE64] keyFile")
                     .help("Load a private key.\n" +
                             "Use the parameter 'format' if the key was saved BASE64.\n" +
                             "The default format is BINARY.\n")
+                    .executor(this::loadPrivateKey)
     ).command(
-            kw("loadPublicKey").parameter(FORMAT).executor(this::loadPublicKey)
+            start().
+                    kw("loadPublicKey").parameter(FORMAT)
                     .usage("loadPublicKey [format=BINARY*|BASE64] keyFile")
                     .help("Load a public key.\n" +
                             "Use the parameter 'format' if the key was saved BASE64.\n" +
                             "The default format is BINARY.\n")
+                    .executor(this::loadPublicKey)
     ).command(
-            kw("sign").parameter(DIGEST).executor(this::sign)
+            start().
+                    kw("sign").parameter(DIGEST)
                     .usage("sign [digest=SHA-512]")
                     .help("Sign the license in memory.\n" +
                             "Specify the name of the digest in case you want something different from SHA-512.\n")
+                    .executor(this::sign)
     ).command(
-            kw("generateKeys").parameters(Set.of(ALGORITHM, SIZE, FORMAT, PUBLIC_KEY_FILE, PRIVATE_KEY_FILE))
-                    .executor(this::generate)
+            start().
+                    kw("generateKeys").parameters(Set.of(ALGORITHM, SIZE, FORMAT, PUBLIC_KEY_FILE, PRIVATE_KEY_FILE))
                     .usage("generateKeys [algorithm=RSA] [size=2048] [format=BINARY*|BASE64] public=xxx private=xxx")
                     .help("Generate public and private keys and save them into files.\n" +
                             "You can specify the algorithm, key size and the format. The defaults are RSA, 2048 and BINARY.\n" +
                             "You should specify the file names using the parameters 'public' and 'private'.\n" +
                             "The keys remain in the memory and can be used to sign and verify license.\n")
+                    .executor(this::generate)
     ).command(
-            kw("verify").noParameters().executor(this::verify)
+            start().
+                    kw("verify").noParameters()
                     .usage("verify")
                     .help("Verify the signature on a license.\n")
+                    .executor(this::verify)
     ).command(
-            kw("newLicense").parameter(CONFIRM).executor(this::newLicense)
+            start().
+                    kw("newLicense").parameter(CONFIRM)
                     .usage("newLicense")
                     .help("Wipe off any existing license from memory and start a new empty one.\n" +
                             "If the license was modified and unsaved you should use the 'confirm=yes' parameter.\n")
+                    .executor(this::newLicense)
     ).command(
-            kw("dumpLicense").noParameters().executor(this::dumpLicense)
+            start().
+                    kw("dumpLicense").noParameters()
                     .usage("dumpLicense")
                     .help("Dump the license features to the screen as it would be saved to a file in TEXT format.\n")
+                    .executor(this::dumpLicense)
     ).command(
-            kw("dumpPublicKey").noParameters().executor(this::digestPublicKey)
+            start().
+                    kw("dumpPublicKey").noParameters()
                     .usage("dumpPublicKey")
-            .help("Dump the public key onto the screen in Java format so that you can copy from the scree\n" +
-                    "and insert the code into your application. Note that you cannot dump the private key\n" +
-                    "as the private should never be encoded into the applciation protected by the license.\n")
+                    .help("Dump the public key onto the screen in Java format so that you can copy from the scree\n" +
+                            "and insert the code into your application. Note that you cannot dump the private key\n" +
+                            "as the private should never be encoded into the applciation protected by the license.\n")
+                    .executor(this::digestPublicKey)
     )
             .alias("ll", "licenseload")
             .alias("lprk", "loadprivatekey")
@@ -112,7 +132,7 @@ public class App {
         new App().application.args(args).run();
     }
 
-    public Boolean allowExit(CommandEnvironment env) {
+    private Boolean allowExit(@SuppressWarnings("unused") CommandEnvironment ignored) {
         return !licenseToSave;
     }
 
@@ -149,7 +169,7 @@ public class App {
         w.flush();
     }
 
-    public void dumpLicense(CommandEnvironment env) {
+    private void dumpLicense(CommandEnvironment env) {
         if (license == null) {
             env.message().error("There is no license to show.");
             return;
@@ -165,7 +185,7 @@ public class App {
 
     }
 
-    public void saveLicense(CommandEnvironment env) {
+    private void saveLicense(CommandEnvironment env) {
         if (license == null) {
             env.message().error("There is no license to save.");
             return;
@@ -194,7 +214,7 @@ public class App {
         }
     }
 
-    public void loadPrivateKey(CommandEnvironment env) {
+    private void loadPrivateKey(CommandEnvironment env) {
         if (keyPair != null && keyPair.getPair() != null && keyPair.getPair().getPrivate() != null) {
             env.message().info("Overriding old key from file");
         }
@@ -214,7 +234,7 @@ public class App {
         }
     }
 
-    public void loadPublicKey(CommandEnvironment env) {
+    private void loadPublicKey(CommandEnvironment env) {
         if (keyPair != null && keyPair.getPair() != null && keyPair.getPair().getPrivate() != null) {
             env.message().info("Overriding old key from file");
         }
@@ -247,7 +267,7 @@ public class App {
         return oldKp;
     }
 
-    public void digestPublicKey(CommandEnvironment env) {
+    private void digestPublicKey(CommandEnvironment env) {
         try {
             if (keyPair == null) {
                 env.message().error("There is no public key loaded");
@@ -282,7 +302,7 @@ public class App {
         }
     }
 
-    public void generate(CommandEnvironment env) {
+    private void generate(CommandEnvironment env) {
         final var algorithm = env.parser().getOrDefault(ALGORITHM, "RSA");
         final var sizeString = env.parser().getOrDefault(SIZE, "2048");
         final var format = IOFormat.valueOf(env.parser().getOrDefault(FORMAT, BINARY));
@@ -312,7 +332,7 @@ public class App {
         }
     }
 
-    public void verify(CommandEnvironment env) {
+    private void verify(CommandEnvironment env) {
         if (license.isOK(keyPair.getPair().getPublic())) {
             env.message().info("License is properly signed.");
         } else {
@@ -320,12 +340,11 @@ public class App {
         }
     }
 
-    public void sign(CommandEnvironment env) {
+    private void sign(CommandEnvironment env) {
         try {
             final var digest = env.parser().getOrDefault("digest", "SHA-512");
             if (license == null) {
                 env.message().error("There is no license loaded to be signed");
-                return;
             } else {
                 license.sign(keyPair.getPair().getPrivate(), digest);
             }
@@ -334,7 +353,7 @@ public class App {
         }
     }
 
-    public void feature(CommandEnvironment env) {
+    private void feature(CommandEnvironment env) {
         if (license == null) {
             env.message().error("Feature can not be added when there is no license loaded. Use 'loadLicense' or 'newLicense'");
             return;
@@ -343,7 +362,7 @@ public class App {
         licenseToSave = true;
     }
 
-    public void newLicense(CommandEnvironment env) {
+    private void newLicense(CommandEnvironment env) {
         if (licenseToSave) {
             if (env.parser().get(CONFIRM, Set.of("yes")) != null) {
                 licenseToSave = false;
@@ -355,7 +374,7 @@ public class App {
         license = new License();
     }
 
-    public void loadLicense(CommandEnvironment env) {
+    private void loadLicense(CommandEnvironment env) {
         if (licenseToSave) {
             if (env.parser().get(CONFIRM, Set.of("yes")) == null) {
                 env.message().error("There is an unsaved license in memory. Use 'newLicense confirm=yes'");
