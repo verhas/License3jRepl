@@ -219,14 +219,14 @@ public class App {
             env.message().info("Overriding old key from file");
         }
         final var keyFile = env.parser().get(0);
-        if (keyFile == null) {
+        if (keyFile.isEmpty()) {
             env.message().error("keyFile has to be specified from where the key is loaded");
             return;
         }
         final var format = IOFormat.valueOf(env.parser().getOrDefault(FORMAT, BINARY, Set.of(TEXT, BINARY)));
-        try (final var reader = new KeyPairReader(keyFile)) {
+        try (final var reader = new KeyPairReader(keyFile.get())) {
             keyPair = merge(keyPair, reader.readPrivate(format));
-            final var keyPath = new File(keyFile).getAbsolutePath();
+            final var keyPath = new File(keyFile.get()).getAbsolutePath();
             env.message().info("Private key loaded from" + keyPath);
         } catch (Exception e) {
             env.message().error("An exception occurred loading the key: " + e);
@@ -239,14 +239,14 @@ public class App {
             env.message().info("Overriding old key from file");
         }
         final var keyFile = env.parser().get(0);
-        if (keyFile == null) {
+        if (keyFile.isEmpty()) {
             env.message().error("keyFile has to be specified from where the key is loaded");
             return;
         }
         final var format = IOFormat.valueOf(env.parser().getOrDefault(FORMAT, BINARY, Set.of(TEXT, BINARY)).toUpperCase());
-        try (final var reader = new KeyPairReader(keyFile)) {
+        try (final var reader = new KeyPairReader(keyFile.get())) {
             keyPair = merge(keyPair, reader.readPublic(format));
-            final var keyPath = new File(keyFile).getAbsolutePath();
+            final var keyPath = new File(keyFile.get()).getAbsolutePath();
             env.message().info("Public key loaded from" + keyPath);
         } catch (Exception e) {
             env.message().error("An exception occurred loading the keys: " + e);
@@ -258,11 +258,12 @@ public class App {
         if (oldKp == null) {
             return newKp;
         }
+        final var cipher = oldKp.cipher();
         if (newKp.getPair().getPublic() != null) {
-            return LicenseKeyPair.Create.from(newKp.getPair().getPublic(), oldKp.getPair().getPrivate());
+            return LicenseKeyPair.Create.from(newKp.getPair().getPublic(), oldKp.getPair().getPrivate(), cipher);
         }
         if (newKp.getPair().getPrivate() != null) {
-            return LicenseKeyPair.Create.from(oldKp.getPair().getPublic(), newKp.getPair().getPrivate());
+            return LicenseKeyPair.Create.from(oldKp.getPair().getPublic(), newKp.getPair().getPrivate(), cipher);
         }
         return oldKp;
     }
@@ -308,7 +309,7 @@ public class App {
         final var format = IOFormat.valueOf(env.parser().getOrDefault(FORMAT, BINARY));
         final var publicKeyFile = env.parser().get(PUBLIC_KEY_FILE);
         final var privateKeyFile = env.parser().get(PRIVATE_KEY_FILE);
-        if (publicKeyFile == null || privateKeyFile == null) {
+        if (publicKeyFile.isEmpty() || privateKeyFile.isEmpty()) {
             env.message().error("Keypair generation needs output files specified where keys are to be saved. " +
                     "Use options 'publicKeyFile' and 'privateKeyFile'");
             return;
@@ -322,11 +323,11 @@ public class App {
             return;
         }
         generateKeys(algorithm, size);
-        try (final var writer = new KeyPairWriter(privateKeyFile, publicKeyFile)) {
+        try (final var writer = new KeyPairWriter(privateKeyFile.get(), publicKeyFile.get())) {
             writer.write(keyPair, format);
-            final var privateKeyPath = new File(privateKeyFile).getAbsolutePath();
+            final var privateKeyPath = new File(privateKeyFile.get()).getAbsolutePath();
             env.message().info("Private key saved to " + privateKeyPath);
-            env.message().info("Public key saved to " + new File(publicKeyFile).getAbsolutePath());
+            env.message().info("Public key saved to " + new File(publicKeyFile.get()).getAbsolutePath());
         } catch (IOException e) {
             env.message().error("An exception occurred saving the keys: " + e);
         }
@@ -364,7 +365,7 @@ public class App {
 
     private void newLicense(CommandEnvironment env) {
         if (licenseToSave) {
-            if (env.parser().get(CONFIRM, Set.of("yes")) != null) {
+            if (env.parser().get(CONFIRM, Set.of("yes")).isPresent()) {
                 licenseToSave = false;
             } else {
                 env.message().error("There is an unsaved license in memory. Use 'newLicense confirm=yes'");
@@ -376,7 +377,7 @@ public class App {
 
     private void loadLicense(CommandEnvironment env) {
         if (licenseToSave) {
-            if (env.parser().get(CONFIRM, Set.of("yes")) == null) {
+            if (env.parser().get(CONFIRM, Set.of("yes")).isPresent()) {
                 env.message().error("There is an unsaved license in memory. Use 'newLicense confirm=yes'");
                 return;
             }
@@ -403,14 +404,14 @@ public class App {
     }
 
     private String getLicenseFileName(CommandEnvironment env) {
-        return env.parser().get(0);
+        return env.parser().get(0).orElse("");
     }
 
     private void generateKeys(String algorithm, int size) {
         try {
             keyPair = LicenseKeyPair.Create.from(algorithm, size);
         } catch (NoSuchAlgorithmException e) {
-            throw new IllegalArgumentException("Algorithm " + algorithm + " is not handled by current version of this application.");
+            throw new IllegalArgumentException("Algorithm " + algorithm + " is not handled by the current version of this application.", e);
         }
     }
 }
