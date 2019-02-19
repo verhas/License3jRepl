@@ -83,9 +83,9 @@ public class App {
     ).command(
             start().
                     kw("generateKeys").parameters(Set.of(ALGORITHM, SIZE, FORMAT, PUBLIC_KEY_FILE, PRIVATE_KEY_FILE))
-                    .usage("generateKeys [algorithm=RSA] [size=2048] [format=BINARY*|BASE64] public=xxx private=xxx")
+                    .usage("generateKeys [algorithm=RSA/ECB/PKCS1Padding] [size=2048] [format=BINARY*|BASE64] public=xxx private=xxx")
                     .help("Generate public and private keys and save them into files.\n" +
-                            "You can specify the algorithm, key size and the format. The defaults are RSA, 2048 and BINARY.\n" +
+                            "You can specify the algorithm, key size and the format. The defaults are RSA/ECB/PKCS1Padding, 2048 and BINARY.\n" +
                             "You should specify the file names using the parameters 'public' and 'private'.\n" +
                             "The keys remain in the memory and can be used to sign and verify license.\n")
                     .executor(this::generate)
@@ -304,7 +304,7 @@ public class App {
     }
 
     private void generate(CommandEnvironment env) {
-        final var algorithm = env.parser().getOrDefault(ALGORITHM, "RSA");
+        final var algorithm = env.parser().getOrDefault(ALGORITHM, "RSA/ECB/PKCS1Padding");
         final var sizeString = env.parser().getOrDefault(SIZE, "2048");
         final var format = IOFormat.valueOf(env.parser().getOrDefault(FORMAT, BINARY));
         final var publicKeyFile = env.parser().get(PUBLIC_KEY_FILE);
