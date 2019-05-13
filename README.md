@@ -18,7 +18,7 @@ will embed it into the the code of your application.
 To start the application you should issue the command:
 
 ```
-java -cp License3jrepl-3.1.0.jar;license3j-3.1.0.jar;repl-1.0.1.jar javax0.license3jrepl.App
+java -jar License3jrepl-3.1.0-jar-with-dependencies.jar
 ```
 
 The list of the JAR files following the command line parameter `-cp`
@@ -27,6 +27,10 @@ application and the Repl framework. The versions in the sample line
 above are one of the first versions. It is recommended to use the latest
 released versions. The License3j and License3Repl libraries are released
 with matching version numbers.
+
+The jar file can be downloaded from github from the URL
+
+https://github.com/verhas/License3jRepl/releases/download/3.1.0/License3jrepl-3.1.0-jar-with-dependencies.jar
 
 The names of the files should include the path to the file using the
 operating system native notation. The path can be relative to the
@@ -38,6 +42,9 @@ and on other Unix operating system. The last argument
 `javax0.license3jrepl.App` is the name of the class that contains the
 `public static main()` method that initializes the REPL application and
 starts it up.
+
+It is recommended to use the latest released versions. The License3j and
+License3Repl libraries are released with matching version numbers.
 
 If the command line is correct and the libraries can be found by the
 Java environment then you will see the
@@ -81,7 +88,8 @@ No keys in memory.
 
 You can issue commands in the application interactively typing commands
 after the prompt. The format of the different commands are described in
-the help text.
+the help text. You can also use the TAB key to auto complete the
+commands and the parameters.
 
 ## Exiting the program
 
