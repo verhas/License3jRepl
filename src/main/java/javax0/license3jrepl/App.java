@@ -191,7 +191,8 @@ public class App {
             return;
         }
         try {
-            final var reader = new LicenseWriter(getLicenseFileName(env));
+            final var fileName = getLicenseFileName(env);
+            final var reader = new LicenseWriter(fileName);
             final var format = env.parser().getOrDefault(FORMAT, TEXT, Set.of(TEXT, BINARY, BASE_64));
             switch (format) {
                 case TEXT:
@@ -207,7 +208,7 @@ public class App {
                     env.message().error("Invalid format to write the license: " + format);
                     return;
             }
-            env.message().info("License was saved into the file " + new File(env.line()).getAbsolutePath());
+            env.message().info("License was saved into the file " + new File(fileName).getAbsolutePath());
             licenseToSave = false;
         } catch (IOException e) {
             env.message().error("Error writing license file " + e);
