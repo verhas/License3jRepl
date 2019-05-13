@@ -191,7 +191,7 @@ public class App {
             return;
         }
         try {
-            final var fileName = getLicenseFileName(env);
+            final var fileName =  getLicenseFileName(env);
             final var reader = new LicenseWriter(fileName);
             final var format = env.parser().getOrDefault(FORMAT, TEXT, Set.of(TEXT, BINARY, BASE_64));
             switch (format) {
