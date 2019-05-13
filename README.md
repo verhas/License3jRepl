@@ -18,7 +18,7 @@ will embed it into the the code of your application.
 To start the application you should issue the command:
 
 ```
-java -jar License3jrepl-3.1.0-jar-with-dependencies.jar
+java -jar License3jrepl-3.1.1-jar-with-dependencies.jar
 ```
 
 The list of the JAR files following the command line parameter `-cp`
@@ -30,7 +30,7 @@ with matching version numbers.
 
 The jar file can be downloaded from github from the URL
 
-https://github.com/verhas/License3jRepl/releases/download/3.1.0/License3jrepl-3.1.0-jar-with-dependencies.jar
+https://github.com/verhas/License3jRepl/releases/download/3.1.1/License3jrepl-3.1.1-jar-with-dependencies.jar
 
 The names of the files should include the path to the file using the
 operating system native notation. The path can be relative to the
