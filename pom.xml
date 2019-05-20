@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.javax0.license3j</groupId>
     <artifactId>License3jrepl</artifactId>
-    <version>3.1.1</version>
+    <version>3.1.2</version>
     <packaging>jar</packaging>
 
     <name>License3j Repl Application</name>
@@ -34,7 +34,7 @@
         <dependency>
             <groupId>com.javax0.license3j</groupId>
             <artifactId>license3j</artifactId>
-            <version>3.1.0</version>
+            <version>3.1.1</version>
         </dependency>
         <dependency>
             <groupId>com.javax0.repl</groupId>
