@@ -114,4 +114,4 @@ confirm=yes`.
 
 You can execute OS commands if you type `!` at the start of the line.
 That way you can see what is in a directory, you can type/cat the
-content of a file to the screen wthout leawing the REPL application.
+content of a file to the screen without leaving the REPL application.

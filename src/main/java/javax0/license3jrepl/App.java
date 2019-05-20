@@ -305,7 +305,7 @@ public class App {
     }
 
     private void generate(CommandEnvironment env) {
-        final var algorithm = env.parser().getOrDefault(ALGORITHM, "RSA/ECB/PKCS1Padding");
+        final var algorithm = env.parser().getOrDefault(ALGORITHM, "RSA");
         final var sizeString = env.parser().getOrDefault(SIZE, "2048");
         final var format = IOFormat.valueOf(env.parser().getOrDefault(FORMAT, BINARY));
         final var publicKeyFile = env.parser().get(PUBLIC_KEY_FILE);
@@ -335,6 +335,14 @@ public class App {
     }
 
     private void verify(CommandEnvironment env) {
+        if( license == null ){
+            env.message().error("There is no license to verify.");
+            return;
+        }
+        if( keyPair == null || keyPair.getPair() == null || keyPair.getPair().getPublic() == null ){
+            env.message().error("There is no public key to verify the license with.");
+            return;
+        }
         if (license.isOK(keyPair.getPair().getPublic())) {
             env.message().info("License is properly signed.");
         } else {
