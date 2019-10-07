@@ -224,7 +224,7 @@ public class App {
             env.message().error("keyFile has to be specified from where the key is loaded");
             return;
         }
-        final var format = IOFormat.valueOf(env.parser().getOrDefault(FORMAT, BINARY, Set.of(TEXT, BINARY)));
+        final var format = IOFormat.valueOf(env.parser().getOrDefault(FORMAT, BINARY, Set.of(BASE_64, BINARY)));
         try (final var reader = new KeyPairReader(keyFile.get())) {
             keyPair = merge(keyPair, reader.readPrivate(format));
             final var keyPath = new File(keyFile.get()).getAbsolutePath();
@@ -244,7 +244,7 @@ public class App {
             env.message().error("keyFile has to be specified from where the key is loaded");
             return;
         }
-        final var format = IOFormat.valueOf(env.parser().getOrDefault(FORMAT, BINARY, Set.of(TEXT, BINARY)).toUpperCase());
+        final var format = IOFormat.valueOf(env.parser().getOrDefault(FORMAT, BINARY, Set.of(BASE_64, BINARY)).toUpperCase());
         try (final var reader = new KeyPairReader(keyFile.get())) {
             keyPair = merge(keyPair, reader.readPublic(format));
             final var keyPath = new File(keyFile.get()).getAbsolutePath();
