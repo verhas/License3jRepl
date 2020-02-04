@@ -113,9 +113,9 @@
                 <version>3.8.1</version>
                 <configuration>
                     <encoding>UTF-8</encoding>
-                    <source>11</source>
-                    <target>11</target>
-                    <release>11</release>
+                    <source>13</source>
+                    <target>13</target>
+                    <release>13</release>
                     <jdkToolchain>
                         <version>13</version>
                     </jdkToolchain>
