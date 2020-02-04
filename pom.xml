@@ -85,7 +85,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
-                <version>3.1.1</version>
+                <version>3.0.1</version>
                 <executions>
                     <execution>
                         <id>attach-javadocs</id>
@@ -117,7 +117,7 @@
                     <target>11</target>
                     <release>11</release>
                     <jdkToolchain>
-                        <version>11</version>
+                        <version>13</version>
                     </jdkToolchain>
                 </configuration>
             </plugin>

@@ -191,7 +191,8 @@ public class App {
             return;
         }
         try {
-            final var reader = new LicenseWriter(getLicenseFileName(env));
+            final var fileName = getLicenseFileName(env);
+            final var reader = new LicenseWriter(fileName);
             final var format = env.parser().getOrDefault(FORMAT, TEXT, Set.of(TEXT, BINARY, BASE_64));
             switch (format) {
                 case TEXT:
@@ -207,7 +208,7 @@ public class App {
                     env.message().error("Invalid format to write the license: " + format);
                     return;
             }
-            env.message().info("License was saved into the file " + new File(env.line()).getAbsolutePath());
+            env.message().info("License was saved into the file " + new File(fileName).getAbsolutePath());
             licenseToSave = false;
         } catch (IOException e) {
             env.message().error("Error writing license file " + e);
@@ -223,7 +224,7 @@ public class App {
             env.message().error("keyFile has to be specified from where the key is loaded");
             return;
         }
-        final var format = IOFormat.valueOf(env.parser().getOrDefault(FORMAT, BINARY, Set.of(TEXT, BINARY)));
+        final var format = IOFormat.valueOf(env.parser().getOrDefault(FORMAT, BINARY, Set.of(BASE_64, BINARY)));
         try (final var reader = new KeyPairReader(keyFile.get())) {
             keyPair = merge(keyPair, reader.readPrivate(format));
             final var keyPath = new File(keyFile.get()).getAbsolutePath();
@@ -243,7 +244,7 @@ public class App {
             env.message().error("keyFile has to be specified from where the key is loaded");
             return;
         }
-        final var format = IOFormat.valueOf(env.parser().getOrDefault(FORMAT, BINARY, Set.of(TEXT, BINARY)).toUpperCase());
+        final var format = IOFormat.valueOf(env.parser().getOrDefault(FORMAT, BINARY, Set.of(BASE_64, BINARY)).toUpperCase());
         try (final var reader = new KeyPairReader(keyFile.get())) {
             keyPair = merge(keyPair, reader.readPublic(format));
             final var keyPath = new File(keyFile.get()).getAbsolutePath();
@@ -304,7 +305,7 @@ public class App {
     }
 
     private void generate(CommandEnvironment env) {
-        final var algorithm = env.parser().getOrDefault(ALGORITHM, "RSA/ECB/PKCS1Padding");
+        final var algorithm = env.parser().getOrDefault(ALGORITHM, "RSA");
         final var sizeString = env.parser().getOrDefault(SIZE, "2048");
         final var format = IOFormat.valueOf(env.parser().getOrDefault(FORMAT, BINARY));
         final var publicKeyFile = env.parser().get(PUBLIC_KEY_FILE);
@@ -334,6 +335,14 @@ public class App {
     }
 
     private void verify(CommandEnvironment env) {
+        if( license == null ){
+            env.message().error("There is no license to verify.");
+            return;
+        }
+        if( keyPair == null || keyPair.getPair() == null || keyPair.getPair().getPublic() == null ){
+            env.message().error("There is no public key to verify the license with.");
+            return;
+        }
         if (license.isOK(keyPair.getPair().getPublic())) {
             env.message().info("License is properly signed.");
         } else {

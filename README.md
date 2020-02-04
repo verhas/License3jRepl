@@ -18,13 +18,30 @@ will embed it into the the code of your application.
 To start the application you should issue the command:
 
 ```
-java -jar License3jrepl-3.1.0-jar-with-dependencies.jar
+java -jar License3jrepl-3.1.1-jar-with-dependencies.jar
 ```
+
+The list of the JAR files following the command line parameter `-cp`
+should include the core License3j library, the License3j Repl
+application and the Repl framework. The versions in the sample line
+above are one of the first versions. It is recommended to use the latest
+released versions. The License3j and License3Repl libraries are released
+with matching version numbers.
 
 The jar file can be downloaded from github from the URL
 
-https://github.com/verhas/License3jRepl/releases/download/3.1.0/License3jrepl-3.1.0-jar-with-dependencies.jar
+https://github.com/verhas/License3jRepl/releases/download/3.1.1/License3jrepl-3.1.1-jar-with-dependencies.jar
 
+The names of the files should include the path to the file using the
+operating system native notation. The path can be relative to the
+current working directory or can be absolute. In the example above the
+JAR files are all in the current working directory.
+
+The list of libraries is separated using `;` on Windows and `:` on Linux
+and on other Unix operating system. The last argument
+`javax0.license3jrepl.App` is the name of the class that contains the
+`public static main()` method that initializes the REPL application and
+starts it up.
 
 It is recommended to use the latest released versions. The License3j and
 License3Repl libraries are released with matching version numbers.
@@ -97,4 +114,4 @@ confirm=yes`.
 
 You can execute OS commands if you type `!` at the start of the line.
 That way you can see what is in a directory, you can type/cat the
-content of a file to the screen wthout leawing the REPL application.
+content of a file to the screen without leaving the REPL application.
