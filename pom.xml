@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.javax0.license3j</groupId>
     <artifactId>License3jrepl</artifactId>
-    <version>3.1.4</version>
+    <version>3.1.5</version>
     <packaging>jar</packaging>
 
     <name>License3j Repl Application</name>
@@ -34,7 +34,7 @@
         <dependency>
             <groupId>com.javax0.license3j</groupId>
             <artifactId>license3j</artifactId>
-            <version>3.1.4</version>
+            <version>3.1.5</version>
         </dependency>
         <dependency>
             <groupId>com.javax0.repl</groupId>
@@ -43,6 +43,12 @@
         </dependency>
     </dependencies>
     <build>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -120,6 +126,32 @@
                         <version>13</version>
                     </jdkToolchain>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>1.6.0</version>
+                <executions>
+                    <execution>
+                        <phase>install</phase>
+                        <configuration>
+                            <executable>docker</executable>
+                            <arguments>
+                                <argument>build</argument>
+                                <argument>-t</argument>
+                                <argument>verhas/license3jrepl:${project.version}</argument>
+                                <argument>-t</argument>
+                                <argument>verhas/license3jrepl:latest</argument>
+                                <argument>-f</argument>
+                                <argument>target/classes/Dockerfile</argument>
+                                <argument>.</argument>
+                            </arguments>
+                        </configuration>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>

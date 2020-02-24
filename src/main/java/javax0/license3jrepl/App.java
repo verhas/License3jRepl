@@ -3,7 +3,11 @@ package javax0.license3jrepl;
 import javax0.license3j.Feature;
 import javax0.license3j.License;
 import javax0.license3j.crypto.LicenseKeyPair;
-import javax0.license3j.io.*;
+import javax0.license3j.io.IOFormat;
+import javax0.license3j.io.KeyPairReader;
+import javax0.license3j.io.KeyPairWriter;
+import javax0.license3j.io.LicenseReader;
+import javax0.license3j.io.LicenseWriter;
 import javax0.repl.CommandEnvironment;
 import javax0.repl.Repl;
 
@@ -13,6 +17,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.Properties;
 import java.util.Set;
 
 import static javax0.repl.CommandDefinitionBuilder.start;
@@ -34,17 +39,29 @@ public class App {
     private License license;
     private boolean licenseToSave = false;
     private LicenseKeyPair keyPair;
+    final private static Properties properties = new Properties();
+    private static String version;
+
+    static {
+        try {
+            properties.load(App.class.getClassLoader().getResourceAsStream("version.properties"));
+            version = properties.getProperty("version");
+        } catch (IOException e) {
+            version = "unknown version";
+        }
+    }
+
     private final Repl application = new Repl().command(
-            start().
-                    kw("feature")
-                    .usage("feature name:TYPE=value")
-                    .help("feature name:TYPE=value to add a new feature to the actual license\n" +
-                            "Adding a new feature will invalidate the license.\n" +
-                            "Do not forget to sign and save the license after you are finished.\n")
-                    .executor(this::feature)
+        start().
+            kw("feature")
+            .usage("feature name:TYPE=value")
+            .help("feature name:TYPE=value to add a new feature to the actual license\n" +
+                "Adding a new feature will invalidate the license.\n" +
+                "Do not forget to sign and save the license after you are finished.\n")
+            .executor(this::feature)
     ).command(
-            start().
-                    kw("licenseLoad").parameters(Set.of(FORMAT, CONFIRM))
+        start().
+            kw("licenseLoad").parameters(Set.of(FORMAT, CONFIRM))
                     .usage("licenseLoad [format=TEXT*|BINARY|BASE64] fileName")
                     .help("Load a license from a file to memory. Default assumption is that the license is TEXT format.\n" +
                             "Use the parameter 'format' if the license was saved BINARY or BASE64.\n")
@@ -114,17 +131,17 @@ public class App {
                     .usage("dumpPublicKey")
                     .help("Dump the public key onto the screen in Java format so that you can copy from the scree\n" +
                             "and insert the code into your application. Note that you cannot dump the private key\n" +
-                            "as the private should never be encoded into the applciation protected by the license.\n")
-                    .executor(this::digestPublicKey)
+                        "as the private should never be encoded into the applciation protected by the license.\n")
+                .executor(this::digestPublicKey)
     )
-            .alias("ll", "licenseload")
-            .alias("lprk", "loadprivatekey")
-            .alias("lpuk", "loadpublickey")
-            .alias("dpk", "dumppublickey")
-            .alias("dl", "dumplicense")
-            .prompt("L3j> $ ")
-            .startup(".license3j")
-            .title("License3j REPL application")
+        .alias("ll", "licenseload")
+        .alias("lprk", "loadprivatekey")
+        .alias("lpuk", "loadpublickey")
+        .alias("dpk", "dumppublickey")
+        .alias("dl", "dumplicense")
+        .prompt("L3j> $ ")
+        .startup(".license3j")
+        .title("License3j REPL application " + version)
             .stateReporter(this::stateReporter)
             .allowExit(this::allowExit);
 
@@ -365,7 +382,7 @@ public class App {
 
     private void feature(CommandEnvironment env) {
         if (license == null) {
-            env.message().error("Feature can not be added when there is no license loaded. Use 'loadLicense' or 'newLicense'");
+            env.message().error("Feature cannot be added when there is no license loaded. Use 'loadLicense' or 'newLicense'");
             return;
         }
         license.add(Feature.Create.from(env.line()));
