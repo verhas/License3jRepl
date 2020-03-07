@@ -26,9 +26,9 @@
         </developer>
     </developers>
     <scm>
-        <connection>scm:git:git@github.com:verhas/License3j.git</connection>
-        <developerConnection>scm:git:ssh://github.com/verhas/License3j.git</developerConnection>
-        <url>https://github.com/verhas/License3j/tree/master</url>
+        <connection>scm:git:git@github.com:verhas/License3jrepl.git</connection>
+        <developerConnection>scm:git:ssh://github.com/verhas/License3jrepl.git</developerConnection>
+        <url>https://github.com/verhas/License3jrepl/tree/master</url>
     </scm>
     <dependencies>
         <dependency>
@@ -134,6 +134,9 @@
                 <executions>
                     <execution>
                         <phase>install</phase>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
                         <configuration>
                             <executable>docker</executable>
                             <arguments>
@@ -147,9 +150,6 @@
                                 <argument>.</argument>
                             </arguments>
                         </configuration>
-                        <goals>
-                            <goal>exec</goal>
-                        </goals>
                     </execution>
                 </executions>
             </plugin>
